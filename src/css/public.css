@@ -1,0 +1,51 @@
+* {
+	margin: 0;
+	padding: 0;
+    box-sizing: border-box;
+}
+
+html, body
+{
+  font-family: "microsoft yahei", Arial, sans-serif;
+}
+
+textarea {
+    overflow: auto;
+    vertical-align: top;
+	font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, SimSun, sans-serif;
+}
+
+section{
+    width: 100%;
+}
+
+ol,ul,menu {
+    list-style: none
+}
+
+a {
+    display: inline-block;
+    text-decoration: none;
+}
+
+a:focus {
+    outline: none
+}
+input,button,img,select,textarea {
+    border: 0;
+    outline: none;
+    font-size: 100%;
+}
+em,i {
+    font-style: normal;
+}
+img {
+    vertical-align: middle;
+}
+body {
+	font-family: "Î¢ÈíÑÅºÚ";
+}
+
+.table_icon {
+    max-height: 40px;
+}
