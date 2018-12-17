@@ -356,53 +356,56 @@
 					<el-switch v-model="addForm.share" :active-value="1" :inactive-value="0"></el-switch>
 				</el-form-item>
                 <fieldset class="fieldset"  v-if="addForm.share == 1" >
-                <legend class="legend">分享配置&nbsp;&nbsp;<el-button type="text" icon="el-icon-plus">新增</el-button></legend>
+                <legend class="legend">分享配置&nbsp;&nbsp;<el-button type="text" icon="el-icon-plus" @click="shareModeAdd(addForm)">新增</el-button></legend>
                 <el-table
+                    size="mini"
                     :data="addForm.shareOptions"
                     style="width: 100%">
                     <el-table-column label="分享模式">
                         <template slot-scope="scope">
-                        <el-select size="mini" v-model="addForm.share_mode" placeholder="活动区域">
-                        <el-option label="区域一" value="shanghai"></el-option>
-                        <el-option label="区域二" value="beijing"></el-option>
-                        </el-select>
+                            <el-select size="mini" v-model="scope.row.share_mode" placeholder="请选择模式">
+                                <el-option-group
+                                    v-for="group in shareOptions"
+                                    :key="group.name" :label="group.name">
+                                    <el-option
+                                        v-for="item in group.options"
+                                        :key="item.pid" :label="item.name" :value="item.pid">
+                                    </el-option>
+                                </el-option-group>
+                            </el-select>
                         </template>
                     </el-table-column>
                     <el-table-column label="指定活动接口">
                         <template slot-scope="scope">
-                        <el-select size="mini" v-model="addForm.share_mode" placeholder="活动区域">
-                        <el-option label="区域一" value="shanghai"></el-option>
-                        <el-option label="区域二" value="beijing"></el-option>
-                        </el-select>
+                            <el-select size="mini" v-model="scope.row.share_ifs" placeholder="请选择活动" :disabled="!changeShareShow(scope.row.share_mode, 'share_ifs')">
+                                <el-option
+                                    v-for="item in shareIfsOptions"
+                                    :key="item.pid" :label="item.name" :value="item.en">
+                                </el-option>
+                            </el-select>
                         </template>
                     </el-table-column>
                     <el-table-column label="分享有效次数">
                         <template slot-scope="scope">
-                        <el-select size="mini" v-model="addForm.share_mode" placeholder="活动区域">
-                        <el-option label="区域一" value="shanghai"></el-option>
-                        <el-option label="区域二" value="beijing"></el-option>
-                        </el-select>
+                            <el-input-number size="mini" controls-position="right" v-model="scope.row.share_count" :min="-1" :disabled="!changeShareShow(scope.row.share_mode, 'share_count')">
+                            </el-input-number>
                         </template>
                     </el-table-column>
                     <el-table-column label="每次增加次数">
                         <template slot-scope="scope">
-                        <el-select size="mini" v-model="addForm.share_mode" placeholder="活动区域">
-                        <el-option label="区域一" value="shanghai"></el-option>
-                        <el-option label="区域二" value="beijing"></el-option>
-                        </el-select>
+                            <el-input-number size="mini" controls-position="right" v-model="scope.row.share_num" :min="0" :disabled="!changeShareShow(scope.row.share_mode, 'share_num')">
+                            </el-input-number>
                         </template>
                     </el-table-column>
                     <el-table-column label="总增加次数限制">
                         <template slot-scope="scope">
-                        <el-select size="mini" v-model="addForm.share_mode" placeholder="活动区域">
-                        <el-option label="区域一" value="shanghai"></el-option>
-                        <el-option label="区域二" value="beijing"></el-option>
-                        </el-select>
+                            <el-input-number size="mini" controls-position="right" v-model="scope.row.share_limit" :min="-1" :disabled="!changeShareShow(scope.row.share_mode, 'share_limit')">
+                            </el-input-number>
                         </template>
                     </el-table-column>
                     <el-table-column label="操作">
                         <template slot-scope="scope">
-                        <el-button size="mini" @click="onSubmit">删除</el-button>
+                            <el-button size="mini" @click="shareModeDel(addForm, scope.$index)">删除</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -1138,7 +1141,16 @@ export default {
         },
         //分享模式新增
         shareModeAdd: function(form){
-            //form.shareOptions.p
+            form.shareOptions.push({
+                share_mode: '',
+                share_count: -1,
+                share_num: 0,
+                share_limit: -1,
+                });
+        },
+        //分享模式删除
+        shareModeDel: function(form, index){
+            form.shareOptions.splice(index, 1);
         },
         //显示新增界面
         handleAdd: function () {
