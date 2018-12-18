@@ -252,9 +252,9 @@
                     <span slot="label">
                         <el-tooltip v-if="tips.forms.count" :effect="tips.effect" :placement="tips.forms.count.placement">
                             <div slot="content" v-html="tips.forms.count.content"></div>
-                            <span>可参加次(票)数<i class="el-icon-question"></i></span>
+                            <span>可参加次数<i class="el-icon-question"></i></span>
                         </el-tooltip>
-                        <span v-else>可参加次(票)数</span>
+                        <span v-else>可参加次数</span>
                     </span>
                     <el-input-number v-model="addForm.count" :min="-1"></el-input-number>
 				</el-form-item>
@@ -293,57 +293,59 @@
 					<el-switch v-model="addForm.login" :active-value="1" :inactive-value="0"></el-switch>
 				</el-form-item>
                 <fieldset class="fieldset"  v-if="addForm.login == 1" >
-                <legend class="legend">登录信息</legend>
-				<el-form-item prop="login_mode">
-                    <span slot="label">
-                        <el-tooltip v-if="tips.forms.login_mode" :effect="tips.effect" :placement="tips.forms.login_mode.placement" :popper-class="tips.forms.login_mode.class">
-                            <div slot="content" v-html="tips.forms.login_mode.content"></div>
-                            <span>登录模式<i class="el-icon-question"></i></span>
-                        </el-tooltip>
-                        <span v-else>登录模式</span>
-                    </span>
-                    <el-select v-model="addForm.login_mode" placeholder="请选择">
-                        <el-option 
-                            v-for="item in loginOptions" 
-                            :key="item.pid" :label="item.name" :value="item.pid" > 
-                        </el-option>
-                    </el-select>
-				</el-form-item>
-				<el-form-item prop="login_ifs" label-width="148px" v-if="changeLoginShow(addForm.login_mode, 'login_ifs')">
-                    <span slot="label">
-                        <el-tooltip v-if="tips.forms.login_ifs" :effect="tips.effect" :placement="tips.forms.login_ifs.placement">
-                            <div slot="content" v-html="tips.forms.login_ifs.content"></div>
-                            <span>指定活动接口<i class="el-icon-question"></i></span>
-                        </el-tooltip>
-                        <span v-else>指定活动接口</span>
-                    </span>
-                    <el-select v-model="addForm.login_ifs" placeholder="请选择">
-                        <el-option 
-                            v-for="item in loginIfsOptions" 
-                            :key="item.pid" :label="item.name" :value="item.pid" > 
-                        </el-option>
-                    </el-select>
-				</el-form-item>
-				<el-form-item prop="login_count" label-width="228px" v-if="changeLoginShow(addForm.login_mode, 'login_count')">
-                    <span slot="label">
-                        <el-tooltip v-if="tips.forms.login_count" :effect="tips.effect" :placement="tips.forms.login_count.placement">
-                            <div slot="content" v-html="tips.forms.login_count.content"></div>
-                            <span>每次登录获得参与次(票)数<i class="el-icon-question"></i></span>
-                        </el-tooltip>
-                        <span v-else>每次登录获得参与次(票)数</span>
-                    </span>
-                    <el-input-number v-model="addForm.login_count" :min="0"></el-input-number>
-				</el-form-item>
-				<el-form-item prop="login_limit" label-width="228px" v-if="changeLoginShow(addForm.login_mode, 'login_limit')">
-                    <span slot="label">
-                        <el-tooltip v-if="tips.forms.login_limit" :effect="tips.effect" :placement="tips.forms.login_limit.placement">
-                            <div slot="content" v-html="tips.forms.login_limit.content"></div>
-                            <span>登录获得参与次(票)数限制<i class="el-icon-question"></i></span>
-                        </el-tooltip>
-                        <span v-else>登录获得参与次(票)数限制</span>
-                    </span>
-                    <el-input-number v-model="addForm.login_limit" :min="-1"></el-input-number>
-				</el-form-item>
+                <legend class="legend">登录配置&nbsp;&nbsp;<el-button type="text" icon="el-icon-plus" @click="loginModeAdd(addForm)">新增</el-button></legend>
+                <el-table
+                    size="mini"
+                    :data="addForm.loginOptions"
+                    style="width: 100%">
+                    <el-table-column label="登录模式">
+                        <template slot-scope="scope">
+                            <el-select size="mini" v-model="scope.row.login_mode" placeholder="请选择模式">
+                                <el-option-group
+                                    v-for="group in loginOptions"
+                                    :key="group.name" :label="group.name">
+                                    <el-option
+                                        v-for="item in group.options"
+                                        :key="item.pid" :label="item.name" :value="item.pid">
+                                    </el-option>
+                                </el-option-group>
+                            </el-select>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="指定活动接口">
+                        <template slot-scope="scope">
+                            <el-select size="mini" v-model="scope.row.login_ifs" placeholder="请选择活动" :disabled="!changeLoginShow(scope.row.login_mode, 'login_ifs')">
+                                <el-option
+                                    v-for="item in loginIfsOptions"
+                                    :key="item.pid" :label="item.name" :value="item.en">
+                                </el-option>
+                            </el-select>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="登录有效次数">
+                        <template slot-scope="scope">
+                            <el-input-number size="mini" controls-position="right" v-model="scope.row.login_count" :min="-1" :disabled="!changeLoginShow(scope.row.login_mode, 'login_count')">
+                            </el-input-number>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="每次增加参与次数">
+                        <template slot-scope="scope">
+                            <el-input-number size="mini" controls-position="right" v-model="scope.row.login_num" :min="0" :disabled="!changeLoginShow(scope.row.login_mode, 'login_num')">
+                            </el-input-number>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="总增加参与次数限制">
+                        <template slot-scope="scope">
+                            <el-input-number size="mini" controls-position="right" v-model="scope.row.login_limit" :min="-1" :disabled="!changeLoginShow(scope.row.login_mode, 'login_limit')">
+                            </el-input-number>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="操作" width="80">
+                        <template slot-scope="scope">
+                            <el-button size="mini" @click="loginModeDel(addForm, scope.$index)">删除</el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
                 </fieldset>
 				<el-form-item prop="share">
                     <span slot="label">
@@ -391,79 +393,24 @@
                             </el-input-number>
                         </template>
                     </el-table-column>
-                    <el-table-column label="每次增加次数">
+                    <el-table-column label="每次增加参与次数">
                         <template slot-scope="scope">
                             <el-input-number size="mini" controls-position="right" v-model="scope.row.share_num" :min="0" :disabled="!changeShareShow(scope.row.share_mode, 'share_num')">
                             </el-input-number>
                         </template>
                     </el-table-column>
-                    <el-table-column label="总增加次数限制">
+                    <el-table-column label="总增加参与次数限制">
                         <template slot-scope="scope">
                             <el-input-number size="mini" controls-position="right" v-model="scope.row.share_limit" :min="-1" :disabled="!changeShareShow(scope.row.share_mode, 'share_limit')">
                             </el-input-number>
                         </template>
                     </el-table-column>
-                    <el-table-column label="操作">
+                    <el-table-column label="操作" width="80">
                         <template slot-scope="scope">
                             <el-button size="mini" @click="shareModeDel(addForm, scope.$index)">删除</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
-                
-                <el-form-item prop="share_mode">
-                    <span slot="label">
-                        <el-tooltip v-if="tips.forms.share_mode" :effect="tips.effect" :placement="tips.forms.share_mode.placement">
-                            <div slot="content" v-html="tips.forms.share_mode.content"></div>
-                            <span>分享模式<i class="el-icon-question"></i></span>
-                        </el-tooltip>
-                        <span v-else>分享模式</span>
-                    </span>
-                    <el-select v-model="addForm.share_mode" placeholder="请选择">
-                        <el-option-group
-                            v-for="group in shareOptions"
-                            :key="group.name" :label="group.name">
-                            <el-option
-                                v-for="item in group.options"
-                                :key="item.pid" :label="item.name" :value="item.pid">
-                            </el-option>
-                        </el-option-group>
-                    </el-select>
-				</el-form-item>
-				<el-form-item prop="share_ifs" label-width="148px" v-if="changeShareShow(addForm.share_mode, 'share_ifs')">
-                    <span slot="label">
-                        <el-tooltip v-if="tips.forms.share_ifs" :effect="tips.effect" :placement="tips.forms.share_ifs.placement">
-                            <div slot="content" v-html="tips.forms.share_ifs.content"></div>
-                            <span>指定活动接口<i class="el-icon-question"></i></span>
-                        </el-tooltip>
-                        <span v-else>指定活动接口</span>
-                    </span>
-                    <el-select v-model="addForm.share_ifs" placeholder="请选择">
-                        <el-option 
-                            v-for="item in shareIfsOptions" 
-                            :key="item.pid" :label="item.name" :value="item.pid" > 
-                        </el-option>
-                    </el-select>
-				</el-form-item>
-				<el-form-item prop="share_count" label-width="228px" v-if="changeShareShow(addForm.share_mode, 'share_count')">
-                    <span slot="label">
-                        <el-tooltip v-if="tips.forms.share_count" :effect="tips.effect" :placement="tips.forms.share_count.placement">
-                            <div slot="content" v-html="tips.forms.share_count.content"></div>
-                            <span>每次分享获得参与次(票)数<i class="el-icon-question"></i></span>
-                        </el-tooltip>
-                        <span v-else>每次分享获得参与次(票)数</span>
-                    </span>
-                    <el-input-number v-model="addForm.share_count" :min="0"></el-input-number>
-				</el-form-item>
-				<el-form-item prop="share_limit" label-width="228px" v-if="changeShareShow(addForm.share_mode, 'share_limit')">
-                    <span slot="label">
-                        <el-tooltip v-if="tips.forms.share_limit" :effect="tips.effect" :placement="tips.forms.share_limit.placement">
-                            <div slot="content" v-html="tips.forms.share_limit.content"></div>
-                            <span>分享获得参与次(票)数限制<i class="el-icon-question"></i></span>
-                        </el-tooltip>
-                        <span v-else>分享获得参与次(票)数限制</span>
-                    </span>
-                    <el-input-number v-model="addForm.share_limit" :min="-1"></el-input-number>
-				</el-form-item>
                 </fieldset>
 				<el-form-item prop="smode">
                     <span slot="label">
@@ -498,7 +445,7 @@
 		</el-dialog>
 
 		<!--编辑界面-->
-		<el-dialog title="编辑" :visible.sync="editFormVisible" :close-on-click-modal="false">
+		<el-dialog title="编辑" :visible.sync="editFormVisible" :close-on-click-modal="false" width="80%">
 			<el-form size="mini" :model="editForm" label-width="100px" :rules="editFormRules" ref="editForm">
 				<el-form-item prop="pid">
                     <span slot="label">
@@ -602,9 +549,9 @@
                     <span slot="label">
                         <el-tooltip v-if="tips.forms.count" :effect="tips.effect" :placement="tips.forms.count.placement">
                             <div slot="content" v-html="tips.forms.count.content"></div>
-                            <span>可参加次(票)数<i class="el-icon-question"></i></span>
+                            <span>可参加次数<i class="el-icon-question"></i></span>
                         </el-tooltip>
-                        <span v-else>可参加次(票)数</span>
+                        <span v-else>可参加次数</span>
                     </span>
                     <el-input-number v-model="editForm.count" :min="-1"></el-input-number>
 				</el-form-item>
@@ -643,57 +590,59 @@
 					<el-switch v-model="editForm.login" :active-value="1" :inactive-value="0"></el-switch>
 				</el-form-item>
                 <fieldset class="fieldset"  v-if="editForm.login == 1" >
-                <legend class="legend">登录信息</legend>
-				<el-form-item prop="login_mode">
-                    <span slot="label">
-                        <el-tooltip v-if="tips.forms.login_mode" :effect="tips.effect" :placement="tips.forms.login_mode.placement" :popper-class="tips.forms.login_mode.class">
-                            <div slot="content" v-html="tips.forms.login_mode.content"></div>
-                            <span>登录模式<i class="el-icon-question"></i></span>
-                        </el-tooltip>
-                        <span v-else>登录模式</span>
-                    </span>
-                    <el-select v-model="editForm.login_mode" placeholder="请选择">
-                        <el-option 
-                            v-for="item in loginOptions" 
-                            :key="item.pid" :label="item.name" :value="item.pid" > 
-                        </el-option>
-                    </el-select>
-				</el-form-item>
-				<el-form-item prop="login_ifs" label-width="148px" v-if="changeLoginShow(editForm.login_mode, 'login_ifs')">
-                    <span slot="label">
-                        <el-tooltip v-if="tips.forms.login_ifs" :effect="tips.effect" :placement="tips.forms.login_ifs.placement">
-                            <div slot="content" v-html="tips.forms.login_ifs.content"></div>
-                            <span>指定活动接口<i class="el-icon-question"></i></span>
-                        </el-tooltip>
-                        <span v-else>指定活动接口</span>
-                    </span>
-                    <el-select v-model="editForm.login_ifs" placeholder="请选择">
-                        <el-option 
-                            v-for="item in loginIfsOptions" 
-                            :key="item.pid" :label="item.name" :value="item.pid" > 
-                        </el-option>
-                    </el-select>
-				</el-form-item>
-				<el-form-item prop="login_count" label-width="228px" v-if="changeLoginShow(editForm.login_mode, 'login_count')">
-                    <span slot="label">
-                        <el-tooltip v-if="tips.forms.login_count" :effect="tips.effect" :placement="tips.forms.login_count.placement">
-                            <div slot="content" v-html="tips.forms.login_count.content"></div>
-                            <span>每次登录获得参与次(票)数<i class="el-icon-question"></i></span>
-                        </el-tooltip>
-                        <span v-else>每次登录获得参与次(票)数</span>
-                    </span>
-                    <el-input-number v-model="editForm.login_count" :min="0"></el-input-number>
-				</el-form-item>
-				<el-form-item prop="login_limit" label-width="228px" v-if="changeLoginShow(editForm.login_mode, 'login_limit')">
-                    <span slot="label">
-                        <el-tooltip v-if="tips.forms.login_limit" :effect="tips.effect" :placement="tips.forms.login_limit.placement">
-                            <div slot="content" v-html="tips.forms.login_limit.content"></div>
-                            <span>登录获得参与次(票)数限制<i class="el-icon-question"></i></span>
-                        </el-tooltip>
-                        <span v-else>登录获得参与次(票)数限制</span>
-                    </span>
-                    <el-input-number v-model="editForm.login_limit" :min="-1"></el-input-number>
-				</el-form-item>
+                <legend class="legend">登录配置&nbsp;&nbsp;<el-button type="text" icon="el-icon-plus" @click="loginModeAdd(editForm)">新增</el-button></legend>
+                <el-table
+                    size="mini"
+                    :data="editForm.loginOptions"
+                    style="width: 100%">
+                    <el-table-column label="登录模式">
+                        <template slot-scope="scope">
+                            <el-select size="mini" v-model="scope.row.login_mode" placeholder="请选择模式">
+                                <el-option-group
+                                    v-for="group in loginOptions"
+                                    :key="group.name" :label="group.name">
+                                    <el-option
+                                        v-for="item in group.options"
+                                        :key="item.pid" :label="item.name" :value="item.pid">
+                                    </el-option>
+                                </el-option-group>
+                            </el-select>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="指定活动接口">
+                        <template slot-scope="scope">
+                            <el-select size="mini" v-model="scope.row.login_ifs" placeholder="请选择活动" :disabled="!changeLoginShow(scope.row.login_mode, 'login_ifs')">
+                                <el-option
+                                    v-for="item in loginIfsOptions"
+                                    :key="item.pid" :label="item.name" :value="item.en">
+                                </el-option>
+                            </el-select>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="登录有效次数">
+                        <template slot-scope="scope">
+                            <el-input-number size="mini" controls-position="right" v-model="scope.row.login_count" :min="-1" :disabled="!changeLoginShow(scope.row.login_mode, 'login_count')">
+                            </el-input-number>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="每次增加参与次数">
+                        <template slot-scope="scope">
+                            <el-input-number size="mini" controls-position="right" v-model="scope.row.login_num" :min="0" :disabled="!changeLoginShow(scope.row.login_mode, 'login_num')">
+                            </el-input-number>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="总增加参与次数限制">
+                        <template slot-scope="scope">
+                            <el-input-number size="mini" controls-position="right" v-model="scope.row.login_limit" :min="-1" :disabled="!changeLoginShow(scope.row.login_mode, 'login_limit')">
+                            </el-input-number>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="操作" width="80">
+                        <template slot-scope="scope">
+                            <el-button size="mini" @click="loginModeDel(editForm, scope.$index)">删除</el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
                 </fieldset>
 				<el-form-item prop="share">
                     <span slot="label">
@@ -706,61 +655,59 @@
 					<el-switch v-model="editForm.share" :active-value="1" :inactive-value="0"></el-switch>
 				</el-form-item>
                 <fieldset class="fieldset"  v-if="editForm.share == 1" >
-                <legend class="legend">分享信息</legend>
-				<el-form-item prop="share_mode">
-                    <span slot="label">
-                        <el-tooltip v-if="tips.forms.share_mode" :effect="tips.effect" :placement="tips.forms.share_mode.placement">
-                            <div slot="content" v-html="tips.forms.share_mode.content"></div>
-                            <span>分享模式<i class="el-icon-question"></i></span>
-                        </el-tooltip>
-                        <span v-else>分享模式</span>
-                    </span>
-                    <el-select v-model="editForm.share_mode" placeholder="请选择">
-                        <el-option-group
-                            v-for="group in shareOptions"
-                            :key="group.name" :label="group.name">
-                            <el-option
-                                v-for="item in group.options"
-                                :key="item.pid" :label="item.name" :value="item.pid">
-                            </el-option>
-                        </el-option-group>
-                    </el-select>
-				</el-form-item>
-				<el-form-item prop="share_ifs" label-width="148px" v-if="changeShareShow(editForm.share_mode, 'share_ifs')">
-                    <span slot="label">
-                        <el-tooltip v-if="tips.forms.share_ifs" :effect="tips.effect" :placement="tips.forms.share_ifs.placement">
-                            <div slot="content" v-html="tips.forms.share_ifs.content"></div>
-                            <span>指定活动接口<i class="el-icon-question"></i></span>
-                        </el-tooltip>
-                        <span v-else>指定活动接口</span>
-                    </span>
-                    <el-select v-model="editForm.share_ifs" placeholder="请选择">
-                        <el-option 
-                            v-for="item in shareIfsOptions" 
-                            :key="item.pid" :label="item.name" :value="item.pid" > 
-                        </el-option>
-                    </el-select>
-				</el-form-item>
-				<el-form-item prop="share_count" label-width="228px" v-if="changeShareShow(editForm.share_mode, 'share_count')">
-                    <span slot="label">
-                        <el-tooltip v-if="tips.forms.share_count" :effect="tips.effect" :placement="tips.forms.share_count.placement">
-                            <div slot="content" v-html="tips.forms.share_count.content"></div>
-                            <span>每次分享获得参与次(票)数<i class="el-icon-question"></i></span>
-                        </el-tooltip>
-                        <span v-else>每次分享获得参与次(票)数</span>
-                    </span>
-                    <el-input-number v-model="editForm.share_count" :min="0"></el-input-number>
-				</el-form-item>
-				<el-form-item prop="share_limit" label-width="228px" v-if="changeShareShow(editForm.share_mode, 'share_limit')">
-                    <span slot="label">
-                        <el-tooltip v-if="tips.forms.share_limit" :effect="tips.effect" :placement="tips.forms.share_limit.placement">
-                            <div slot="content" v-html="tips.forms.share_limit.content"></div>
-                            <span>分享获得参与次(票)数限制<i class="el-icon-question"></i></span>
-                        </el-tooltip>
-                        <span v-else>分享获得参与次(票)数限制</span>
-                    </span>
-                    <el-input-number v-model="editForm.share_limit" :min="-1"></el-input-number>
-				</el-form-item>
+                <legend class="legend">分享配置&nbsp;&nbsp;<el-button type="text" icon="el-icon-plus" @click="shareModeAdd(editForm)">新增</el-button></legend>
+                <el-table
+                    size="mini"
+                    :data="editForm.shareOptions"
+                    style="width: 100%">
+                    <el-table-column label="分享模式">
+                        <template slot-scope="scope">
+                            <el-select size="mini" v-model="scope.row.share_mode" placeholder="请选择模式">
+                                <el-option-group
+                                    v-for="group in shareOptions"
+                                    :key="group.name" :label="group.name">
+                                    <el-option
+                                        v-for="item in group.options"
+                                        :key="item.pid" :label="item.name" :value="item.pid">
+                                    </el-option>
+                                </el-option-group>
+                            </el-select>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="指定活动接口">
+                        <template slot-scope="scope">
+                            <el-select size="mini" v-model="scope.row.share_ifs" placeholder="请选择活动" :disabled="!changeShareShow(scope.row.share_mode, 'share_ifs')">
+                                <el-option
+                                    v-for="item in shareIfsOptions"
+                                    :key="item.pid" :label="item.name" :value="item.en">
+                                </el-option>
+                            </el-select>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="分享有效次数">
+                        <template slot-scope="scope">
+                            <el-input-number size="mini" controls-position="right" v-model="scope.row.share_count" :min="-1" :disabled="!changeShareShow(scope.row.share_mode, 'share_count')">
+                            </el-input-number>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="每次增加参与次数">
+                        <template slot-scope="scope">
+                            <el-input-number size="mini" controls-position="right" v-model="scope.row.share_num" :min="0" :disabled="!changeShareShow(scope.row.share_mode, 'share_num')">
+                            </el-input-number>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="总增加参与次数限制">
+                        <template slot-scope="scope">
+                            <el-input-number size="mini" controls-position="right" v-model="scope.row.share_limit" :min="-1" :disabled="!changeShareShow(scope.row.share_mode, 'share_limit')">
+                            </el-input-number>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="操作" width="80">
+                        <template slot-scope="scope">
+                            <el-button size="mini" @click="shareModeDel(editForm, scope.$index)">删除</el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
                 </fieldset>
 				<el-form-item prop="smode">
                     <span slot="label">
@@ -800,7 +747,7 @@
 
 import Utils from "../../js/utils";
 import Tips from '../../tips/act/type';
-import {Type} from "../../api/act";
+import {Type, Interface} from "../../api/act";
 
 export default {
     data() {
@@ -857,17 +804,17 @@ export default {
                     name: '活动期间',
                     options: [{
                         pid: 1,
-                        name: '分享后可获得本活动参与次(票)数',
+                        name: '分享后可获得本活动参与次数',
                         login: 0,
                         scope: ['share_count', 'share_num', 'share_limit']
                     },{
                         pid: 3,
-                        name: '分享后他人访问后分享人可获得参与次(票)数',
+                        name: '分享后他人访问后分享人可获得参与次数',
                         login: 1,
                         scope: ['share_count', 'share_num', 'share_limit']
                     },{
                         pid: 4,
-                        name: '分享后他人成功参与指定活动后分享人可获得参与次(票)数',
+                        name: '分享后他人成功参与指定活动后分享人可获得参与次数',
                         login: 1,
                         scope: ['share_ifs', 'share_count', 'share_num', 'share_limit']
                     }]
@@ -875,49 +822,57 @@ export default {
                     name: '活动期间每天',
                     options: [{
                         pid: 2,
-                        name: '每天分享后可获得本活动参与次(票)数',
+                        name: '每天分享后可获得本活动参与次数',
                         login: 0,
                         scope: ['share_count', 'share_num', 'share_limit']
                     }]
                 }
             ],
             loginOptions: [{
-                    pid: 0,
-                    name: '仅登录',
-                    model: 1,
-                    scope: []
+                    name: '通用',
+                    options: [{
+                        pid: 0,
+                        name: '仅登录',
+                        model: 1,
+                        scope: []
+                    },{
+                        pid: 1,
+                        name: '需登录才能参与活动',
+                        model: 1,
+                        scope: []
+                    },{
+                        pid: 4,
+                        name: '参与指定活动后才能参与本活动',
+                        model: 1,
+                        scope: ['login_ifs']
+                    },{
+                        pid: 5,
+                        name: '需登录并且参与指定活动后才能参与本活动',
+                        model: 1,
+                        scope: ['login_ifs']
+                    }]
                 },{
-                    pid: 1,
-                    name: '需登录才能参与活动',
-                    model: 1,
-                    scope: []
+                    name: '活动期间',
+                    options: [{
+                        pid: 2,
+                        name: '登录可获得参与次数',
+                        model: 1,
+                        scope: ['login_count', 'login_num', 'login_limit']
+                    }]
                 },{
-                    pid: 2,
-                    name: '登录后可获得参与次(票)数',
-                    model: 1,
-                    scope: ['login_count', 'login_limit']
-                },{
-                    pid: 3,
-                    name: '每天登录可获得参与次(票)数',
-                    model: 1,
-                    scope: ['login_count', 'login_limit']
-                },{
-                    pid: 4,
-                    name: '参与指定活动后才能参与本活动',
-                    model: 1,
-                    scope: ['login_ifs']
-                },{
-                    pid: 5,
-                    name: '需登录并且参与指定活动后才能参与本活动',
-                    model: 1,
-                    scope: ['login_ifs']
+                    name: '活动期间每天',
+                    options: [{
+                        pid: 3,
+                        name: '每天登录可获得参与次数',
+                        model: 1,
+                        scope: ['login_count', 'login_num', 'login_limit']
+                    }]
                 }
             ],
             loginIfsOptions: [],
             shareIfsOptions: [],
             smodeOptions: [],
             usedPids: [],
-            tableData4: [{},{}],
 
             addFormVisible: false,
             addLoading: false,
@@ -967,14 +922,8 @@ export default {
                 sign: 0,
                 login: 0,
                 loginOptions: [],
-                login_mode: '',
-                login_count: '',
-                login_limit: '',
                 share: 0,
                 shareOptions: [],
-                share_mode: '',
-                share_count: '',
-                share_limit: '',
                 smode: '',
                 svalue: ''
             },
@@ -1082,10 +1031,12 @@ export default {
         changeLoginShow: function(mode, option){
             let node = {};
             for (let i = 0; i < this.loginOptions.length; i++) {
-                const e = this.loginOptions[i];
-                if(mode == e.pid){
-                    node = e;
-                    break;
+                for (let j = 0; j < this.loginOptions[i].options.length; j++) {
+                    const e = this.loginOptions[i].options[j];
+                    if(mode == e.pid){
+                        node = e;
+                        break;
+                    }
                 }
             }
             for (let j = 0; j < node.scope.length; j++) {
@@ -1103,6 +1054,21 @@ export default {
         changeRows: function (val) {
             this.rows = val;
             this.queryByPage();
+        },
+        initInterfaces: function(){
+            let params = {};
+            Interface.findForOptions(this, params, (res, vm, cp) => {
+                if(res.code > 0){
+                    this.loginIfsOptions = res.data;
+                    this.shareIfsOptions = res.data;
+                }else{
+                    this.$message({
+                        message: res.msg,
+                        type: 'error',
+                        duration: 5 * 1000
+                    });
+                }
+            });
         },
         queryRefresh: function(){
             for(let key in this.filters){
@@ -1139,6 +1105,19 @@ export default {
                 }
             });
         },
+        //登录模式新增
+        loginModeAdd: function(form){
+            form.loginOptions.push({
+                login_mode: '',
+                login_count: -1,
+                login_num: 0,
+                login_limit: -1,
+            });
+        },
+        //登录模式删除
+        loginModeDel: function(form, index){
+            form.loginOptions.splice(index, 1);
+        },
         //分享模式新增
         shareModeAdd: function(form){
             form.shareOptions.push({
@@ -1146,7 +1125,7 @@ export default {
                 share_count: -1,
                 share_num: 0,
                 share_limit: -1,
-                });
+            });
         },
         //分享模式删除
         shareModeDel: function(form, index){
@@ -1169,14 +1148,8 @@ export default {
                 sign: 0,
                 login: 0,
                 loginOptions: [],
-                login_mode: '',
-                login_count: '',
-                login_limit: '',
                 share: 0,
                 shareOptions: [],
-                share_mode: '',
-                share_count: '',
-                share_limit: '',
                 smode: '',
                 svalue: ''
             };
@@ -1184,8 +1157,14 @@ export default {
             this.addFormVisible = true;
             //查询已使用pid
             if(this.usedPids.length != 0){
+                //自动生成pid
+                this.handleAddPid();
                 return;
             }
+            this.queryPids();
+        },
+        //查询已使用pid
+        queryPids: function(){
             Type.findForPids(this, {}, (res, vm, cp) => {
                 if(res.code > 0){
                     this.usedPids = res.data;
@@ -1220,21 +1199,15 @@ export default {
             this.tips.forms.pid.content += str[1] + '：';
             this.tips.forms.pid.content += temp.join(',');
         },
-        //自动生成pid
+        //自动生成pid -- 自增
         handleAddPid: function(){
-            let test = 4;
-            let pids = [1001,1002,1003,2001,2002,2005];
-            let minPid = Number(test + "001");
-            let maxPid = Number(test + "999");
+            let pids = this.usedPids;
             let curPid = 0;
             for (let i = 0; i < pids.length; i++) {
-                const e = pids[i];
-                if(e >= minPid && e <= maxPid){
-                    curPid = Math.max(e, minPid);
-                }
+                curPid = Math.max(pids[i], curPid);
             }
-            curPid = curPid == 0 ? minPid : curPid + 1;
-            console.log(curPid);
+            curPid = curPid == 0 ? 1 : curPid + 1;
+            this.addForm.pid = curPid;
         },
         //新增
         addSubmit: function () {
@@ -1243,6 +1216,8 @@ export default {
                     this.$confirm('确认提交吗？', '提示', {}).then(() => {
                         this.addLoading = true;
                         let params = Object.assign({}, this.addForm);
+                        params.loginOptions = JSON.stringify(params.loginOptions);
+                        params.shareOptions = JSON.stringify(params.shareOptions);
                         Type.add(this, params, (res, vm, cp) => {
                             this.addLoading = false;
                             if(res.code > 0){
@@ -1277,6 +1252,8 @@ export default {
                     this.$confirm('确认提交吗？', '提示', {}).then(() => {
                         this.editLoading = true;
                         let params = Object.assign({}, this.editForm);
+                        params.loginOptions = JSON.stringify(params.loginOptions);
+                        params.shareOptions = JSON.stringify(params.shareOptions);
                         Type.update(this, params, (res, vm, cp) => {
                             this.editLoading = false;
                             if(res.code > 0){
@@ -1315,6 +1292,7 @@ export default {
                             type: 'success'
                         });
                         this.queryByPage();
+                        this.usedPids = [];
                     }else{
                         this.$message({
                             message: res.msg,
@@ -1329,6 +1307,7 @@ export default {
         }
     },
     created() {
+        this.initInterfaces();
         this.queryByPage();
     },
     mounted() {

@@ -109,3 +109,49 @@ export const Config = {
         });
     }
 }
+
+
+//Interface
+export const Interface = {
+    baseUrl: baseUrl,
+    findByPage: function(vm, params, callback, cp){
+        const url = this.baseUrl + "/interface/findPage";
+        Utils.ajaxReq(url, params, function (res) {
+            if (typeof callback === "function") {
+                callback(res, vm, cp);
+            }
+        });
+    },
+    findForOptions: function(vm, params, callback, cp){
+        const url = this.baseUrl + "/interface/options";
+        Utils.ajaxReq(url, params, function (res) {
+            if (typeof callback === "function") {
+                callback(res, vm, cp);
+            }
+        });
+    },
+    add: function(vm, params, callback, cp){
+        const url = this.baseUrl + "/interface/add";
+        Utils.ajaxReq(url, params, function (res) {
+            if (typeof callback === "function") {
+                callback(res, vm, cp);
+            }
+        });
+    },
+    update: function(vm, params, callback, cp){
+        const url = this.baseUrl + "/interface/update";
+        Utils.ajaxReq(url, params, function (res) {
+            if (typeof callback === "function") {
+                callback(res, vm, cp);
+            }
+        });
+    },
+    del: function(vm, params, callback, cp){
+        const url = this.baseUrl + "/interface/delete";
+        Utils.ajaxReq(url, params, function (res) {
+            if (typeof callback === "function") {
+                callback(res, vm, cp);
+            }
+        });
+    }
+}

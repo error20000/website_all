@@ -84,7 +84,24 @@
 		<!--新增界面-->
 		<el-dialog title="新增" :visible.sync="addFormVisible" :close-on-click-modal="false">
 			<el-form size="mini" :model="addForm" label-width="100px" :rules="addFormRules" ref="addForm">
-				<el-form-item prop="pid">
+                <el-form-item prop="type">
+                    <span slot="label">
+                        <el-tooltip v-if="tips.forms.type" :effect="tips.effect" :placement="tips.forms.type.placement">
+                            <div slot="content" v-html="tips.forms.type.content"></div>
+                            <span>活动分类<i class="el-icon-question"></i></span>
+                        </el-tooltip>
+                        <span v-else>活动分类</span>
+                    </span>
+                    <el-select v-model="addForm.type" placeholder="请选择">
+                        <el-option 
+                            v-for="item in typeOptions" 
+                            :key="item.pid" :label="item.name" 
+                            :value="item.pid" 
+                            :disabled="item.status == 1 ? false : true"> 
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item prop="pid">
                     <span slot="label">
                         <el-tooltip v-if="tips.forms.pid" :effect="tips.effect" :placement="tips.forms.pid.placement">
                             <div slot="content" v-html="tips.forms.pid.content"></div>
@@ -92,7 +109,7 @@
                         </el-tooltip>
                         <span v-else>编号</span>
                     </span>
-					<el-input v-model="addForm.pid" placeholder="请输入整数"></el-input>
+					<el-input v-model="addForm.pid" placeholder="请输入正整数"></el-input>
 				</el-form-item>
 				<el-form-item prop="name">
                     <span slot="label">
@@ -104,23 +121,6 @@
                     </span>
 					<el-input v-model="addForm.name"></el-input>
 				</el-form-item>
-                <el-form-item prop="app">
-                    <span slot="label">
-                        <el-tooltip v-if="tips.forms.app" :effect="tips.effect" :placement="tips.forms.app.placement">
-                            <div slot="content" v-html="tips.forms.app.content"></div>
-                            <span>所属应用<i class="el-icon-question"></i></span>
-                        </el-tooltip>
-                        <span v-else>所属应用</span>
-                    </span>
-                    <el-select v-model="addForm.app" placeholder="请选择">
-                        <el-option 
-                            v-for="item in appOptions" 
-                            :key="item.pid" :label="item.name" 
-                            :value="item.pid" 
-                            :disabled="item.status == 1 ? false : true"> 
-                        </el-option>
-                    </el-select>
-                </el-form-item>
                 <el-form-item prop="parent">
                     <span slot="label">
                         <el-tooltip v-if="tips.forms.parent" :effect="tips.effect" :placement="tips.forms.parent.placement">
@@ -279,7 +279,6 @@ export default {
             listLoading: false,
             tips: Tips,
             typeOptions: [],
-            menuOptions: [],
             usedPids: [],
 
             addFormVisible: false,
@@ -288,8 +287,8 @@ export default {
                 pid: [
                     { required: true, message: '请输入编号', trigger: 'blur' },
                     { trigger: 'blur', validator: function(rule, value, callback){
-                            if (!/^-?\d+$/.test(value)) { //整数
-                                callback(new Error('请输入整数'));
+                            if (!/^-?\d+$/.test(value) || value <= 0) { //正整数
+                                callback(new Error('请输入正整数'));
                             } else {
                                 callback();
                             }
@@ -335,8 +334,8 @@ export default {
                 pid: [
                     { required: true, message: '请输入编号', trigger: 'blur' },
                     { trigger: 'blur', validator: function(rule, value, callback){
-                            if (!/^-?\d+$/.test(value)) { //整数
-                                callback(new Error('请输入整数'));
+                            if (!/^-?\d+$/.test(value) || value <= 0) { //正整数
+                                callback(new Error('请输入正整数'));
                             } else {
                                 callback();
                             }
@@ -353,6 +352,11 @@ export default {
             editForm: {
             }
 
+        }
+    },
+    watch: {
+        'addForm.type'(val) {
+            this.handleAddPid();
         }
     },
     methods: {
@@ -444,33 +448,6 @@ export default {
                 }
             });
         },
-        //查询已使用pid
-        queryPids: function(){
-            Config.findForPids(this, {}, (res, vm, cp) => {
-                if(res.code > 0){
-                    this.usedPids = res.data;
-                    //美化提示
-                    let temp = [];
-                    if(this.usedPids.length < 11){
-                        temp = this.usedPids;
-                    }else{
-                        temp = this.usedPids.slice(0, 5);
-                        temp.push('......');
-                        temp = temp.concat(this.usedPids.slice(-5));
-                    }
-                    let str = this.tips.forms.pid.content.split('：');
-                    this.tips.forms.pid.content = str[0] + '：';
-                    this.tips.forms.pid.content += str[1] + '：';
-                    this.tips.forms.pid.content += temp.join(',');
-                }else{
-                    this.$message({
-                        message: res.msg,
-                        type: 'error',
-                        duration: 5 * 1000
-                    });
-                }
-            });
-        },
         //显示新增界面
         handleAdd: function () {
             this.addForm = {
@@ -486,7 +463,63 @@ export default {
             this.addLoading = false;
             this.addFormVisible = true;
             //查询已使用pid
+            if(this.usedPids.length != 0){
+                this.handleAddPid();
+                return;
+            }
             this.queryPids();
+        },
+        //查询已使用pid
+        queryPids: function(){
+            Config.findForPids(this, {}, (res, vm, cp) => {
+                if(res.code > 0){
+                    this.usedPids = res.data;
+                    this.handlePids();
+                }else{
+                    this.$message({
+                        message: res.msg,
+                        type: 'error',
+                        duration: 5 * 1000
+                    });
+                }
+            });
+        },
+        //美化pid提示
+        handlePids: function(pid){
+            if(pid){
+                this.usedPids.push(pid);
+            }
+            let temp = [];
+            if(this.usedPids.length < 11){
+                temp = this.usedPids;
+            }else{
+                temp = this.usedPids.slice(0, 5);
+                temp.push('......');
+                temp = temp.concat(this.usedPids.slice(-5));
+            }
+            let str = this.tips.forms.pid.content.split('：');
+            this.tips.forms.pid.content = str[0] + '：';
+            this.tips.forms.pid.content += str[1] + '：';
+            this.tips.forms.pid.content += temp.join(',');
+        },
+        //自动生成pid
+        handleAddPid: function(){
+            let test = this.addForm.type;
+            if(!test){
+                return;
+            }
+            let pids = this.usedPids;
+            let minPid = Number(test + "001");
+            let maxPid = Number(test + "999");
+            let curPid = 0;
+            for (let i = 0; i < pids.length; i++) {
+                const e = pids[i];
+                if(e >= minPid && e <= maxPid){
+                    curPid = Math.max(e, minPid);
+                }
+            }
+            curPid = curPid == 0 ? minPid : curPid + 1;
+            this.addForm.pid = curPid;
         },
         //新增
         addSubmit: function () {
