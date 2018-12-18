@@ -76,7 +76,7 @@
                         </el-tooltip>
                         <span v-else>编号</span>
                     </span>
-					<el-input v-model="addForm.pid" placeholder="请输入整数"></el-input>
+					<el-input v-model="addForm.pid" placeholder="请输入正整数"></el-input>
 				</el-form-item>
 				<el-form-item prop="name">
                     <span slot="label">
@@ -164,7 +164,7 @@
                         </el-tooltip>
                         <span v-else>编号</span>
                     </span>
-					<el-input v-model="editForm.pid" placeholder="请输入整数" disabled></el-input>
+					<el-input v-model="editForm.pid" placeholder="请输入正整数" disabled></el-input>
 				</el-form-item>
 				<el-form-item prop="name">
                     <span slot="label">
@@ -272,8 +272,8 @@ export default {
                 pid: [
                     { required: true, message: '请输入编号', trigger: 'blur' },
                     { trigger: 'blur', validator: function(rule, value, callback){
-                            if (!/^-?\d+$/.test(value)) { //整数
-                                callback(new Error('请输入整数'));
+                            if (!/^-?\d+$/.test(value) || value <= 0) { //正整数
+                                callback(new Error('请输入正整数'));
                             } else {
                                 callback();
                             }
@@ -317,8 +317,8 @@ export default {
                 pid: [
                     { required: true, message: '请输入编号', trigger: 'blur' },
                     { trigger: 'blur', validator: function(rule, value, callback){
-                            if (!/^-?\d+$/.test(value)) { //整数
-                                callback(new Error('请输入整数'));
+                            if (!/^-?\d+$/.test(value) || value <= 0) { //正整数
+                                callback(new Error('请输入正整数'));
                             } else {
                                 callback();
                             }
@@ -451,22 +451,22 @@ export default {
             this.addLoading = false;
             this.addFormVisible = true;
             //查询已使用pid
+            if(this.usedPids.length != 0){
+                //自动生成pid
+                this.handleAddPid();
+                return;
+            }
+            this.queryPids();
+        },
+        //查询已使用pid
+        queryPids: function(){
             Menu.findForPids(this, {}, (res, vm, cp) => {
                 if(res.code > 0){
                     this.usedPids = res.data;
                     //美化提示
-                    let temp = [];
-                    if(this.usedPids.length < 11){
-                        temp = this.usedPids;
-                    }else{
-                        temp = this.usedPids.slice(0, 5);
-                        temp.push('......');
-                        temp = temp.concat(this.usedPids.slice(-5));
-                    }
-                    let str = this.tips.forms.pid.content.split('：');
-                    this.tips.forms.pid.content = str[0] + '：';
-                    this.tips.forms.pid.content += str[1] + '：';
-                    this.tips.forms.pid.content += temp.join(',');
+                    this.handlePids();
+                    //自动生成pid
+                    this.handleAddPid();
                 }else{
                     this.$message({
                         message: res.msg,
@@ -475,6 +475,34 @@ export default {
                     });
                 }
             });
+        },
+        //美化pid提示
+        handlePids: function(pid){
+            if(pid){
+                this.usedPids.push(pid);
+            }
+            let temp = [];
+            if(this.usedPids.length < 11){
+                temp = this.usedPids;
+            }else{
+                temp = this.usedPids.slice(0, 5);
+                temp.push('......');
+                temp = temp.concat(this.usedPids.slice(-5));
+            }
+            let str = this.tips.forms.pid.content.split('：');
+            this.tips.forms.pid.content = str[0] + '：';
+            this.tips.forms.pid.content += str[1] + '：';
+            this.tips.forms.pid.content += temp.join(',');
+        },
+        //自动生成pid -- 自增
+        handleAddPid: function(){
+            let pids = this.usedPids;
+            let curPid = 0;
+            for (let i = 0; i < pids.length; i++) {
+                curPid = Math.max(pids[i], curPid);
+            }
+            curPid = curPid == 0 ? 1 : curPid + 1;
+            this.addForm.pid = curPid;
         },
         //新增
         addSubmit: function () {
@@ -493,6 +521,7 @@ export default {
                                 this.addFormVisible = false;
                                 this.queryByPage();
                                 this.initMenus();
+                                this.handlePids(params.pid);
                             }else{
                                 this.$message({
                                     message: res.msg,
@@ -557,6 +586,7 @@ export default {
                         });
                         this.queryByPage();
                         this.initMenus();
+                        this.usedPids = [];
                     }else{
                         this.$message({
                             message: res.msg,
