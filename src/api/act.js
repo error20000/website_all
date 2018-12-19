@@ -31,6 +31,14 @@ export const Type = {
             }
         });
     },
+    findAttrs: function(vm, params, callback, cp){
+        const url = this.baseUrl + "/activeType/findTypeAttr";
+        Utils.ajaxReq(url, params, function (res) {
+            if (typeof callback === "function") {
+                callback(res, vm, cp);
+            }
+        });
+    },
     add: function(vm, params, callback, cp){
         const url = this.baseUrl + "/activeType/add";
         Utils.ajaxReq(url, params, function (res) {

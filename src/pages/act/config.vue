@@ -92,7 +92,7 @@
                         </el-tooltip>
                         <span v-else>活动分类</span>
                     </span>
-                    <el-select v-model="addForm.type" placeholder="请选择">
+                    <el-select v-model="addForm.type" placeholder="请选择" @change="changeType">
                         <el-option 
                             v-for="item in typeOptions" 
                             :key="item.pid" :label="item.name" 
@@ -121,47 +121,77 @@
                     </span>
 					<el-input v-model="addForm.name"></el-input>
 				</el-form-item>
-                <el-form-item prop="parent">
+                <el-form-item prop="sort">
                     <span slot="label">
-                        <el-tooltip v-if="tips.forms.parent" :effect="tips.effect" :placement="tips.forms.parent.placement">
-                            <div slot="content" v-html="tips.forms.parent.content"></div>
-                            <span>父级菜单<i class="el-icon-question"></i></span>
+                        <el-tooltip v-if="tips.forms.sort" :effect="tips.effect" :placement="tips.forms.sort.placement">
+                            <div slot="content" v-html="tips.forms.sort.content"></div>
+                            <span>排序<i class="el-icon-question"></i></span>
                         </el-tooltip>
-                        <span v-else>父级菜单</span>
+                        <span v-else>排序</span>
                     </span>
-                    <el-select v-model="addForm.parent" placeholder="请选择">
+					<el-input v-model="addForm.sort"></el-input>
+                </el-form-item>
+				<el-form-item prop="status">
+                    <span slot="label">
+                        <el-tooltip v-if="tips.forms.status" :effect="tips.effect" :placement="tips.forms.status.placement">
+                            <div slot="content" v-html="tips.forms.status.content"></div>
+                            <span>状态<i class="el-icon-question"></i></span>
+                        </el-tooltip>
+                        <span v-else>状态</span>
+                    </span>
+					<el-switch v-model="addForm.status" :active-value="1" :inactive-value="0"></el-switch>
+				</el-form-item>
+				<el-form-item prop="desc">
+                    <span slot="label">
+                        <el-tooltip v-if="tips.forms.desc" :effect="tips.effect" :placement="tips.forms.desc.placement">
+                            <div slot="content" v-html="tips.forms.desc.content"></div>
+                            <span>描述<i class="el-icon-question"></i></span>
+                        </el-tooltip>
+                        <span v-else>描述</span>
+                    </span>
+					<el-input type="textarea" v-model="addForm.desc"></el-input>
+				</el-form-item>
+				<el-form-item prop="smode">
+                    <span slot="label">
+                        <el-tooltip v-if="tips.forms.smode" :effect="tips.effect" :placement="tips.forms.smode.placement">
+                            <div slot="content" v-html="tips.forms.smode.content"></div>
+                            <span>成功后操作<i class="el-icon-question"></i></span>
+                        </el-tooltip>
+                        <span v-else>成功后操作</span>
+                    </span>
+                    <el-select v-model="addForm.smode" placeholder="请选择">
                         <el-option 
-                            v-if="!item.app || item.app == addForm.app" 
-                            v-for="item in menuOptions" 
-                            :key="item.pid" 
-                            :label="item.name" 
-                            :value="item.pid"> 
-                            <span style="float: left" v-html="formatterByMenusOptions(item.pid)">{{ item.name }}</span>
+                            v-for="item in smodeOptions" 
+                            :key="item.pid" :label="item.name" :value="item.pid" > 
                         </el-option>
                     </el-select>
-                </el-form-item>
-				<el-form-item prop="url">
-                    <span slot="label">
-                        <el-tooltip v-if="tips.forms.url" :effect="tips.effect" :placement="tips.forms.url.placement">
-                            <div slot="content" v-html="tips.forms.url.content"></div>
-                            <span>链接<i class="el-icon-question"></i></span>
-                        </el-tooltip>
-                        <span v-else>链接</span>
-                    </span>
-					<el-input v-model="addForm.url"></el-input>
 				</el-form-item>
-				<el-form-item prop="icon">
+				<el-form-item prop="svalue">
                     <span slot="label">
-                        <el-tooltip v-if="tips.forms.icon" :effect="tips.effect" :placement="tips.forms.icon.placement">
-                            <div slot="content" v-html="tips.forms.icon.content"></div>
-                            <span>图标<i class="el-icon-question"></i></span>
+                        <el-tooltip v-if="tips.forms.svalue" :effect="tips.effect" :placement="tips.forms.svalue.placement">
+                            <div slot="content" v-html="tips.forms.svalue.content"></div>
+                            <span>操作内容<i class="el-icon-question"></i></span>
                         </el-tooltip>
-                        <span v-else>图标</span>
+                        <span v-else>操作内容</span>
                     </span>
-					<el-input v-model="addForm.icon">
-                        <el-button slot="append" icon="el-icon-upload">上传</el-button>
-                    </el-input>
+                    <el-input v-model="addForm.svalue"></el-input>
 				</el-form-item>
+                <fieldset class="fieldset" v-if="addForm.type">
+                <legend class="legend">属性</legend>
+                    <el-form-item  v-for="item in typeAttrs" :key="item.pid" :prop="item.code">
+                        <span slot="label">
+                            <el-tooltip v-if="item.desc" placement="right">
+                                <div slot="content" v-html="item.desc"></div>
+                                <span>{{item.name}}<i class="el-icon-question"></i></span>
+                            </el-tooltip>
+                            <span v-else>{{item.name}}</span>
+                        </span>
+                        <el-input :model="addForm[item.code]"></el-input>
+                    </el-form-item>
+                </fieldset>
+                <fieldset class="fieldset">
+                <legend class="legend">自定义属性&nbsp;&nbsp;<el-button type="text" icon="el-icon-plus" @click="shareModeAdd(addForm)">新增</el-button></legend>
+                </fieldset>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button size="mini" @click.native="addFormVisible = false">取消</el-button>
@@ -172,7 +202,25 @@
 		<!--编辑界面-->
 		<el-dialog title="编辑" :visible.sync="editFormVisible" :close-on-click-modal="false">
 			<el-form size="mini" :model="editForm" label-width="100px" :rules="editFormRules" ref="editForm">
-				<el-form-item prop="pid">
+				<el-form-item prop="type">
+                    <span slot="label">
+                        <el-tooltip v-if="tips.forms.type" :effect="tips.effect" :placement="tips.forms.type.placement">
+                            <div slot="content" v-html="tips.forms.type.content"></div>
+                            <span>活动分类<i class="el-icon-question"></i></span>
+                        </el-tooltip>
+                        <span v-else>活动分类</span>
+                    </span>
+                    <el-select v-model="editForm.type" placeholder="请选择" disabled>
+                        <el-option 
+                            v-for="item in typeOptions" 
+                            :key="item.pid" :label="item.name" 
+                            :value="item.pid" 
+                            @change="changeType"
+                            :disabled="item.status == 1 ? false : true"> 
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item prop="pid">
                     <span slot="label">
                         <el-tooltip v-if="tips.forms.pid" :effect="tips.effect" :placement="tips.forms.pid.placement">
                             <div slot="content" v-html="tips.forms.pid.content"></div>
@@ -180,7 +228,7 @@
                         </el-tooltip>
                         <span v-else>编号</span>
                     </span>
-					<el-input v-model="editForm.pid" placeholder="请输入整数" disabled></el-input>
+					<el-input v-model="editForm.pid" placeholder="请输入正整数" disabled></el-input>
 				</el-form-item>
 				<el-form-item prop="name">
                     <span slot="label">
@@ -192,64 +240,60 @@
                     </span>
 					<el-input v-model="editForm.name"></el-input>
 				</el-form-item>
-                <el-form-item prop="app">
+                <el-form-item prop="sort">
                     <span slot="label">
-                        <el-tooltip v-if="tips.forms.app" :effect="tips.effect" :placement="tips.forms.app.placement">
-                            <div slot="content" v-html="tips.forms.app.content"></div>
-                            <span>所属应用<i class="el-icon-question"></i></span>
+                        <el-tooltip v-if="tips.forms.sort" :effect="tips.effect" :placement="tips.forms.sort.placement">
+                            <div slot="content" v-html="tips.forms.sort.content"></div>
+                            <span>排序<i class="el-icon-question"></i></span>
                         </el-tooltip>
-                        <span v-else>所属应用</span>
+                        <span v-else>排序</span>
                     </span>
-                    <el-select v-model="editForm.app" placeholder="请选择">
-                        <el-option 
-                            v-for="item in appOptions" 
-                            :key="item.pid" :label="item.name" 
-                            :value="item.pid" 
-                            :disabled="item.status == 1 ? false : true"> 
-                        </el-option>
-                    </el-select>
+					<el-input v-model="editForm.sort"></el-input>
                 </el-form-item>
-                <el-form-item prop="parent">
+				<el-form-item prop="status">
                     <span slot="label">
-                        <el-tooltip v-if="tips.forms.parent" :effect="tips.effect" :placement="tips.forms.parent.placement">
-                            <div slot="content" v-html="tips.forms.parent.content"></div>
-                            <span>父级菜单<i class="el-icon-question"></i></span>
+                        <el-tooltip v-if="tips.forms.status" :effect="tips.effect" :placement="tips.forms.status.placement">
+                            <div slot="content" v-html="tips.forms.status.content"></div>
+                            <span>状态<i class="el-icon-question"></i></span>
                         </el-tooltip>
-                        <span v-else>父级菜单</span>
+                        <span v-else>状态</span>
                     </span>
-                    <el-select v-model="editForm.parent" placeholder="请选择">
-                        <el-option 
-                            v-if="!item.app || item.app == editForm.app " 
-                            v-for="item in menuOptions" 
-                            :key="item.pid" 
-                            :label="item.name" 
-                            :value="item.pid"
-                            :disabled="editForm.pid == item.pid ? true : false"> 
-                            <span style="float: left" v-html="formatterByMenusOptions(item.pid)">{{ item.name }}</span>
-                        </el-option>
-                    </el-select>
-                </el-form-item>
-				<el-form-item prop="url">
-                    <span slot="label">
-                        <el-tooltip v-if="tips.forms.url" :effect="tips.effect" :placement="tips.forms.url.placement">
-                            <div slot="content" v-html="tips.forms.url.content"></div>
-                            <span>链接<i class="el-icon-question"></i></span>
-                        </el-tooltip>
-                        <span v-else>链接</span>
-                    </span>
-					<el-input v-model="editForm.url"></el-input>
+					<el-switch v-model="editForm.status" :active-value="1" :inactive-value="0"></el-switch>
 				</el-form-item>
-				<el-form-item prop="icon">
+				<el-form-item prop="desc">
                     <span slot="label">
-                        <el-tooltip v-if="tips.forms.icon" :effect="tips.effect" :placement="tips.forms.icon.placement">
-                            <div slot="content" v-html="tips.forms.icon.content"></div>
-                            <span>图标<i class="el-icon-question"></i></span>
+                        <el-tooltip v-if="tips.forms.desc" :effect="tips.effect" :placement="tips.forms.desc.placement">
+                            <div slot="content" v-html="tips.forms.desc.content"></div>
+                            <span>描述<i class="el-icon-question"></i></span>
                         </el-tooltip>
-                        <span v-else>图标</span>
+                        <span v-else>描述</span>
                     </span>
-					<el-input v-model="editForm.icon">
-                        <el-button slot="append" icon="el-icon-upload">上传</el-button>
-                    </el-input>
+					<el-input type="textarea" v-model="editForm.desc"></el-input>
+				</el-form-item>
+				<el-form-item prop="smode">
+                    <span slot="label">
+                        <el-tooltip v-if="tips.forms.smode" :effect="tips.effect" :placement="tips.forms.smode.placement">
+                            <div slot="content" v-html="tips.forms.smode.content"></div>
+                            <span>成功后操作<i class="el-icon-question"></i></span>
+                        </el-tooltip>
+                        <span v-else>成功后操作</span>
+                    </span>
+                    <el-select v-model="editForm.smode" placeholder="请选择">
+                        <el-option 
+                            v-for="item in smodeOptions" 
+                            :key="item.pid" :label="item.name" :value="item.pid" > 
+                        </el-option>
+                    </el-select>
+				</el-form-item>
+				<el-form-item prop="svalue">
+                    <span slot="label">
+                        <el-tooltip v-if="tips.forms.svalue" :effect="tips.effect" :placement="tips.forms.svalue.placement">
+                            <div slot="content" v-html="tips.forms.svalue.content"></div>
+                            <span>操作内容<i class="el-icon-question"></i></span>
+                        </el-tooltip>
+                        <span v-else>操作内容</span>
+                    </span>
+                    <el-input v-model="editForm.svalue"></el-input>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
@@ -280,6 +324,9 @@ export default {
             tips: Tips,
             typeOptions: [],
             usedPids: [],
+            smodeOptions: [],
+            typeAttrs: [],
+            configAttrs: [],
 
             addFormVisible: false,
             addLoading: false,
@@ -404,6 +451,24 @@ export default {
             Type.findForOptions(this, params, (res, vm, cp) => {
                 if(res.code > 0){
                     this.typeOptions = res.data;
+                }else{
+                    this.$message({
+                        message: res.msg,
+                        type: 'error',
+                        duration: 5 * 1000
+                    });
+                }
+            });
+        },
+        //查询分类属性
+        changeType: function(val){
+            console.log(val);
+            let params = {
+                pid: val
+            };
+            Type.findAttrs(this, params, (res, vm, cp) => {
+                if(res.code > 0){
+                    this.typeAttrs = res.data;
                 }else{
                     this.$message({
                         message: res.msg,
