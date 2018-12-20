@@ -176,8 +176,8 @@
                     </span>
                     <el-input v-model="addForm.svalue"></el-input>
 				</el-form-item>
-                <fieldset class="fieldset" v-if="addForm.type">
-                <legend class="legend">属性</legend>
+                <fieldset class="fieldset paddingRight" v-if="addForm.type">
+                <legend class="legend">属性&nbsp;&nbsp;<el-button type="text" icon="el-icon-plus" @click="handleCustomAdd()">自定义</el-button></legend>
                     <el-form-item  v-for="item in typeAttrs" :key="item.pid" :prop="item.code">
                         <span slot="label">
                             <el-tooltip v-if="item.desc" placement="right">
@@ -186,17 +186,128 @@
                             </el-tooltip>
                             <span v-else>{{item.name}}</span>
                         </span>
-                        <el-input :model="addForm[item.code]"></el-input>
+                        <el-input v-if="item.input === 0" v-model="addForm[item.code]"></el-input>
+                        <el-input v-else-if="item.input === 1" type="textarea" v-model="addForm[item.code]"></el-input>
+                        <el-input v-else-if="item.input === 2" v-model="addForm[item.code]">
+                            <el-button slot="append" icon="el-icon-upload">上传</el-button>
+                        </el-input>
+                        <el-select v-else-if="item.input === 3" v-model="addForm[item.code]" placeholder="请选择">
+                            <el-option
+                                v-for="opt in item.options"
+                                :key="opt.code"
+                                :label="opt.name"
+                                :value="opt.value">
+                            </el-option>
+                        </el-select>
+                        <el-radio-group v-else-if="item.input === 4" v-model="addForm[item.code]">
+                            <el-radio 
+                                v-for="opt in item.options"
+                                :key="opt.code"
+                                :label="opt.value">
+                                {{opt.name}}
+                            </el-radio>
+                        </el-radio-group>
+                        <el-checkbox-group v-else-if="item.input === 5" v-model="addForm[item.code]">
+                            <el-checkbox 
+                                v-for="opt in item.options"
+                                :key="opt.code"
+                                :label="opt.value">
+                                {{opt.name}}
+                            </el-checkbox>
+                        </el-checkbox-group>
+                        <el-select v-else-if="item.input === 6" multiple v-model="addForm[item.code]" placeholder="请选择">
+                            <el-option
+                                v-for="opt in item.options"
+                                :key="opt.code"
+                                :label="opt.name"
+                                :value="opt.value">
+                            </el-option>
+                        </el-select>
                     </el-form-item>
-                </fieldset>
-                <fieldset class="fieldset">
-                <legend class="legend">自定义属性&nbsp;&nbsp;<el-button type="text" icon="el-icon-plus" @click="shareModeAdd(addForm)">新增</el-button></legend>
                 </fieldset>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button size="mini" @click.native="addFormVisible = false">取消</el-button>
 				<el-button size="mini" type="primary" @click.native="addSubmit" :loading="addLoading">提交</el-button>
 			</div>
+            <!-- 自定义 -->
+            <el-dialog
+                width="90%"
+                title="自定义属性"
+                :close-on-click-modal="false"
+                :visible.sync="customFormVisible"
+                append-to-body>
+				<el-form>
+                    <fieldset class="fieldset">
+                    <legend class="legend"><el-button type="text" icon="el-icon-plus" @click="addCustom">新增</el-button></legend>
+                    <el-table
+                        size="mini"
+                        :data="customForm"
+                        style="width: 100%">
+                        <el-table-column label="名称">
+                            <template slot-scope="scope">
+                                <el-input size="mini" v-model="scope.row.name"></el-input>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="字段">
+                            <template slot-scope="scope">
+                                <el-input size="mini" v-model="scope.row.code"></el-input>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="值">
+                            <template slot-scope="scope">
+                                <el-input size="mini" v-model="scope.row.value"></el-input>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="描述">
+                            <template slot-scope="scope">
+                                <el-input size="mini" type="textarea" v-model="scope.row.desc"></el-input>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="类型">
+                            <template slot-scope="scope">
+                                <el-select size="mini" v-model="scope.row.input" placeholder="请选择类型">
+                                    <el-option
+                                        v-for="item in inputTypeOptions"
+                                        :key="item.pid" :label="item.name" :value="item.pid">
+                                    </el-option>
+                                </el-select>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="是否必填">
+                            <template slot-scope="scope">
+                                <el-switch v-model="scope.row.isnull" :active-value="1" :inactive-value="0"></el-switch>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="是否展示">
+                            <template slot-scope="scope">
+                                <el-switch v-model="scope.row.isshow" :active-value="1" :inactive-value="0"></el-switch>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="是否隐藏">
+                            <template slot-scope="scope">
+                                <el-switch v-model="scope.row.ishide" :active-value="1" :inactive-value="0"></el-switch>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="效验正则">
+                            <template slot-scope="scope">
+                                <el-input size="mini" v-model="scope.row.regexp"></el-input>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="效验提示">
+                            <template slot-scope="scope">
+                                <el-input size="mini" v-model="scope.row.regtips"></el-input>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="操作" width="80">
+                            <template slot-scope="scope">
+                                <el-button size="mini" @click="delCustom(scope.$index)">删除</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                    </fieldset>
+			    </el-form>
+            </el-dialog>
 		</el-dialog>
 
 		<!--编辑界面-->
@@ -327,6 +438,29 @@ export default {
             smodeOptions: [],
             typeAttrs: [],
             configAttrs: [],
+            inputTypeOptions: [{
+                    pid: 0,
+                    name: '文本（text）'
+                },{
+                    pid: 1,
+                    name: '文本域（textarea）'
+                },{
+                    pid: 2,
+                    name: '文件上传（file）'
+                },{
+                    pid: 3,
+                    name: '选择框（select）'
+                },{
+                    pid: 4,
+                    name: '单选（radio）'
+                },{
+                    pid: 5,
+                    name: '多选（checkbox）'
+                },{
+                    pid: 5,
+                    name: '多选框（multiple select）'
+                }
+            ],
 
             addFormVisible: false,
             addLoading: false,
@@ -396,9 +530,11 @@ export default {
                     { required: true, message: '请选择分类', trigger: 'blur' }
                 ]
             },
-            editForm: {
-            }
+            editForm: {},
 
+            customFormVisible: false,
+            customLoading: false,
+            customForm: []
         }
     },
     watch: {
@@ -462,13 +598,13 @@ export default {
         },
         //查询分类属性
         changeType: function(val){
-            console.log(val);
             let params = {
                 pid: val
             };
             Type.findAttrs(this, params, (res, vm, cp) => {
                 if(res.code > 0){
                     this.typeAttrs = res.data;
+                    this.handleTypeAttr();
                 }else{
                     this.$message({
                         message: res.msg,
@@ -477,6 +613,33 @@ export default {
                     });
                 }
             });
+        },
+        //处理分类属性
+        handleTypeAttr: function(){
+            let form = this.addForm;
+            for (let i = 0; i < this.typeAttrs.length; i++) {
+                const e = this.typeAttrs[i];
+                let value = e.def;
+                if(e.input == 3 || e.input == 4){ //单选
+                    for (let j = 0; j < e.options.length; j++) {
+                        const e2 = e.options[j];
+                        if(e2.checked === 1){
+                            value = e2.value;
+                            break;
+                        }
+                    }
+                }else if(e.input == 5 || e.input == 6){ //多选
+                    value = [];
+                    for (let k = 0; k < e.options.length; k++) {
+                        const e2 = e.options[k];
+                        if(e2.checked === 1){
+                            value.push(e2.value);
+                        }
+                    }
+                }
+                form[e.code] = value
+            }
+            this.addForm = Object.assign({}, form);
         },
         queryRefresh: function(){
             for(let key in this.filters){
@@ -512,6 +675,36 @@ export default {
                     });
                 }
             });
+        },
+        //自定义属性
+        handleCustomAdd: function(){
+            this.customForm = [];
+            this.customLoading = false;
+            this.customFormVisible = true;
+        },
+        handleCustomEdit: function(){
+            this.customLoading = false;
+            this.customFormVisible = true;
+        },
+        addCustom: function(){
+            this.customForm.push({
+                type: this.addForm.type,
+                config: this.addForm.pid,
+                name: '',
+                code: '',
+                value: '',
+                desc: '',
+                input: 0,
+                isnull: 0,
+                isshow: 1,
+                ishide: 0,
+                sys: 0,
+                regexp: '',
+                regtips: ''
+            });
+        },
+        delCustom: function(index){
+            this.customForm.splice(index, 1);
         },
         //显示新增界面
         handleAdd: function () {
@@ -593,6 +786,9 @@ export default {
                     this.$confirm('确认提交吗？', '提示', {}).then(() => {
                         this.addLoading = true;
                         let params = Object.assign({}, this.addForm);
+                        console.log(params);
+                        this.addLoading = false;
+                        return;
                         Config.add(this, params, (res, vm, cp) => {
                             this.addLoading = false;
                             if(res.code > 0){
@@ -710,5 +906,8 @@ export default {
   .fieldset .legend{
     color: #dcdfe6;
     margin-left: 10px;
+  }
+  .paddingRight{
+    padding-right: 10px;
   }
 </style>
