@@ -177,7 +177,7 @@
                     <el-input v-model="addForm.svalue"></el-input>
 				</el-form-item>
                 <fieldset class="fieldset paddingRight" v-if="addForm.type">
-                <legend class="legend">属性&nbsp;&nbsp;<el-button type="text" icon="el-icon-plus" @click="handleCustomAdd()">自定义</el-button></legend>
+                <legend class="legend">属性&nbsp;&nbsp;<el-button type="text" icon="el-icon-edit" @click="handleCustomAdd()">自定义</el-button></legend>
                     <el-form-item  v-for="item in typeAttrs" :key="item.pid" :prop="item.code">
                         <span slot="label">
                             <el-tooltip v-if="item.desc" placement="right">
@@ -194,7 +194,7 @@
                         <el-select v-else-if="item.input === 3" v-model="addForm[item.code]" placeholder="请选择">
                             <el-option
                                 v-for="opt in item.options"
-                                :key="opt.code"
+                                :key="opt.name"
                                 :label="opt.name"
                                 :value="opt.value">
                             </el-option>
@@ -202,7 +202,7 @@
                         <el-radio-group v-else-if="item.input === 4" v-model="addForm[item.code]">
                             <el-radio 
                                 v-for="opt in item.options"
-                                :key="opt.code"
+                                :key="opt.name"
                                 :label="opt.value">
                                 {{opt.name}}
                             </el-radio>
@@ -210,7 +210,7 @@
                         <el-checkbox-group v-else-if="item.input === 5" v-model="addForm[item.code]">
                             <el-checkbox 
                                 v-for="opt in item.options"
-                                :key="opt.code"
+                                :key="opt.name"
                                 :label="opt.value">
                                 {{opt.name}}
                             </el-checkbox>
@@ -218,7 +218,7 @@
                         <el-select v-else-if="item.input === 6" multiple v-model="addForm[item.code]" placeholder="请选择">
                             <el-option
                                 v-for="opt in item.options"
-                                :key="opt.code"
+                                :key="opt.name"
                                 :label="opt.name"
                                 :value="opt.value">
                             </el-option>
@@ -230,84 +230,6 @@
 				<el-button size="mini" @click.native="addFormVisible = false">取消</el-button>
 				<el-button size="mini" type="primary" @click.native="addSubmit" :loading="addLoading">提交</el-button>
 			</div>
-            <!-- 自定义 -->
-            <el-dialog
-                width="90%"
-                title="自定义属性"
-                :close-on-click-modal="false"
-                :visible.sync="customFormVisible"
-                append-to-body>
-				<el-form>
-                    <fieldset class="fieldset">
-                    <legend class="legend"><el-button type="text" icon="el-icon-plus" @click="addCustom">新增</el-button></legend>
-                    <el-table
-                        size="mini"
-                        :data="customForm"
-                        style="width: 100%">
-                        <el-table-column label="名称">
-                            <template slot-scope="scope">
-                                <el-input size="mini" v-model="scope.row.name"></el-input>
-                            </template>
-                        </el-table-column>
-                        <el-table-column label="字段">
-                            <template slot-scope="scope">
-                                <el-input size="mini" v-model="scope.row.code"></el-input>
-                            </template>
-                        </el-table-column>
-                        <el-table-column label="值">
-                            <template slot-scope="scope">
-                                <el-input size="mini" v-model="scope.row.value"></el-input>
-                            </template>
-                        </el-table-column>
-                        <el-table-column label="描述">
-                            <template slot-scope="scope">
-                                <el-input size="mini" type="textarea" v-model="scope.row.desc"></el-input>
-                            </template>
-                        </el-table-column>
-                        <el-table-column label="类型">
-                            <template slot-scope="scope">
-                                <el-select size="mini" v-model="scope.row.input" placeholder="请选择类型">
-                                    <el-option
-                                        v-for="item in inputTypeOptions"
-                                        :key="item.pid" :label="item.name" :value="item.pid">
-                                    </el-option>
-                                </el-select>
-                            </template>
-                        </el-table-column>
-                        <el-table-column label="是否必填">
-                            <template slot-scope="scope">
-                                <el-switch v-model="scope.row.isnull" :active-value="1" :inactive-value="0"></el-switch>
-                            </template>
-                        </el-table-column>
-                        <el-table-column label="是否展示">
-                            <template slot-scope="scope">
-                                <el-switch v-model="scope.row.isshow" :active-value="1" :inactive-value="0"></el-switch>
-                            </template>
-                        </el-table-column>
-                        <el-table-column label="是否隐藏">
-                            <template slot-scope="scope">
-                                <el-switch v-model="scope.row.ishide" :active-value="1" :inactive-value="0"></el-switch>
-                            </template>
-                        </el-table-column>
-                        <el-table-column label="效验正则">
-                            <template slot-scope="scope">
-                                <el-input size="mini" v-model="scope.row.regexp"></el-input>
-                            </template>
-                        </el-table-column>
-                        <el-table-column label="效验提示">
-                            <template slot-scope="scope">
-                                <el-input size="mini" v-model="scope.row.regtips"></el-input>
-                            </template>
-                        </el-table-column>
-                        <el-table-column label="操作" width="80">
-                            <template slot-scope="scope">
-                                <el-button size="mini" @click="delCustom(scope.$index)">删除</el-button>
-                            </template>
-                        </el-table-column>
-                    </el-table>
-                    </fieldset>
-			    </el-form>
-            </el-dialog>
 		</el-dialog>
 
 		<!--编辑界面-->
@@ -406,12 +328,191 @@
                     </span>
                     <el-input v-model="editForm.svalue"></el-input>
 				</el-form-item>
+                <fieldset class="fieldset paddingRight" v-if="editForm.type">
+                <legend class="legend">属性&nbsp;&nbsp;<el-button type="text" icon="el-icon-edit" @click="handleCustomEdit()">自定义</el-button></legend>
+                    <el-form-item  v-for="item in typeAttrs" :key="item.pid" :prop="item.code">
+                        <span slot="label">
+                            <el-tooltip v-if="item.desc" placement="right">
+                                <div slot="content" v-html="item.desc"></div>
+                                <span>{{item.name}}<i class="el-icon-question"></i></span>
+                            </el-tooltip>
+                            <span v-else>{{item.name}}</span>
+                        </span>
+                        <el-input v-if="item.input === 0" v-model="editForm[item.code]"></el-input>
+                        <el-input v-else-if="item.input === 1" type="textarea" v-model="editForm[item.code]"></el-input>
+                        <el-input v-else-if="item.input === 2" v-model="editForm[item.code]">
+                            <el-button slot="append" icon="el-icon-upload">上传</el-button>
+                        </el-input>
+                        <el-select v-else-if="item.input === 3" v-model="editForm[item.code]" placeholder="请选择">
+                            <el-option
+                                v-for="opt in item.options"
+                                :key="opt.name"
+                                :label="opt.name"
+                                :value="opt.value">
+                            </el-option>
+                        </el-select>
+                        <el-radio-group v-else-if="item.input === 4" v-model="editForm[item.code]">
+                            <el-radio 
+                                v-for="opt in item.options"
+                                :key="opt.name"
+                                :label="opt.value">
+                                {{opt.name}}
+                            </el-radio>
+                        </el-radio-group>
+                        <el-checkbox-group v-else-if="item.input === 5" v-model="editForm[item.code]">
+                            <el-checkbox 
+                                v-for="opt in item.options"
+                                :key="opt.name"
+                                :label="opt.value">
+                                {{opt.name}}
+                            </el-checkbox>
+                        </el-checkbox-group>
+                        <el-select v-else-if="item.input === 6" multiple v-model="editForm[item.code]" placeholder="请选择">
+                            <el-option
+                                v-for="opt in item.options"
+                                :key="opt.name"
+                                :label="opt.name"
+                                :value="opt.value">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                </fieldset>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button size="mini" @click.native="editFormVisible = false">取消</el-button>
 				<el-button size="mini" type="primary" @click.native="editSubmit" :loading="editLoading">提交</el-button>
 			</div>
 		</el-dialog>
+        
+        <!-- 自定义属性 -->
+        <el-dialog
+            width="90%"
+            title="自定义属性"
+            :close-on-click-modal="false"
+            :visible.sync="customFormVisible"
+            append-to-body>
+            <fieldset class="fieldset">
+            <legend class="legend"><el-button type="text" icon="el-icon-plus" @click="addCustom">新增</el-button></legend>
+            <el-table
+                size="mini"
+                :data="customForm"
+                style="width: 100%">
+                <el-table-column label="名称" width="120px">
+                    <template slot-scope="scope">
+                        <el-input size="mini" v-model="scope.row.name"></el-input>
+                    </template>
+                </el-table-column>
+                <el-table-column label="字段" width="120px">
+                    <template slot-scope="scope">
+                        <el-input size="mini" v-model="scope.row.code"></el-input>
+                    </template>
+                </el-table-column>
+                <el-table-column label="类型" width="160px">
+                    <template slot-scope="scope">
+                        <el-select size="mini" v-model="scope.row.input" placeholder="请选择类型">
+                            <el-option
+                                v-for="item in inputTypeOptions"
+                                :key="item.pid" :label="item.name" :value="item.pid">
+                            </el-option>
+                        </el-select>
+                    </template>
+                </el-table-column>
+                <el-table-column label="默认值" width="120px">
+                    <template slot-scope="scope">
+                        <el-button v-if="scope.row.input == 3 || scope.row.input == 4 || scope.row.input == 5 || scope.row.input == 6" 
+                            type="text" @click="handleCustomSelAdd(scope.$index, scope.row.options)">选项</el-button>
+                        <el-input v-else size="mini" v-model="scope.row.value"></el-input>
+                    </template>
+                </el-table-column>
+                <el-table-column label="描述" width="120px">
+                    <template slot-scope="scope">
+                        <el-input size="mini" type="textarea" v-model="scope.row.desc" rows="4"></el-input>
+                    </template>
+                </el-table-column>
+                <el-table-column label="是否必填">
+                    <template slot-scope="scope">
+                        <el-switch v-model="scope.row.isnull" :active-value="1" :inactive-value="0"></el-switch>
+                    </template>
+                </el-table-column>
+                <el-table-column label="是否展示">
+                    <template slot-scope="scope">
+                        <el-switch v-model="scope.row.isshow" :active-value="1" :inactive-value="0"></el-switch>
+                    </template>
+                </el-table-column>
+                <el-table-column label="是否隐藏">
+                    <template slot-scope="scope">
+                        <el-switch v-model="scope.row.ishide" :active-value="1" :inactive-value="0"></el-switch>
+                    </template>
+                </el-table-column>
+                <el-table-column label="效验正则" width="120px">
+                    <template slot-scope="scope">
+                        <el-input size="mini" v-model="scope.row.regexp"></el-input>
+                    </template>
+                </el-table-column>
+                <el-table-column label="效验提示" width="120px">
+                    <template slot-scope="scope">
+                        <el-input size="mini" v-model="scope.row.regtips"></el-input>
+                    </template>
+                </el-table-column>
+                <el-table-column label="操作" width="80px" fixed="right">
+                    <template slot-scope="scope">
+                        <el-button size="mini" @click="delCustom(scope.$index)">删除</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+            </fieldset>
+            <div slot="footer" class="dialog-footer">
+                <el-button size="mini" @click.native="customFormVisible = false">取消</el-button>
+                <el-button size="mini" type="primary" @click.native="submitCustom" :loading="customLoading">提交</el-button>
+            </div>
+        </el-dialog>
+
+        <!-- 自定义选项 -->
+        <el-dialog
+            width="80%"
+            title="自定义选项"
+            :close-on-click-modal="false"
+            :visible.sync="customSelFormVisible"
+            append-to-body>
+            <fieldset class="fieldset">
+            <legend class="legend"><el-button type="text" icon="el-icon-plus" @click="addCustomSel">新增</el-button></legend>
+            <el-table
+                size="mini"
+                :data="customSelForm"
+                style="width: 100%">
+                <el-table-column label="名称">
+                    <template slot-scope="scope">
+                        <el-input size="mini" v-model="scope.row.name"></el-input>
+                    </template>
+                </el-table-column>
+                <el-table-column label="字段">
+                    <template slot-scope="scope">
+                        <el-input size="mini" v-model="scope.row.code"></el-input>
+                    </template>
+                </el-table-column>
+                <el-table-column label="值">
+                    <template slot-scope="scope">
+                        <el-input size="mini" v-model="scope.row.value"></el-input>
+                    </template>
+                </el-table-column>
+                <el-table-column label="默认选中">
+                    <template slot-scope="scope">
+                        <el-switch v-model="scope.row.checked" :active-value="1" :inactive-value="0"></el-switch>
+                    </template>
+                </el-table-column>
+                <el-table-column label="操作" width="80px" fixed="right">
+                    <template slot-scope="scope">
+                        <el-button size="mini" @click="delCustomSel(scope.$index)">删除</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+            </fieldset>
+            <div slot="footer" class="dialog-footer">
+                <el-button size="mini" @click.native="customSelFormVisible = false">取消</el-button>
+                <el-button size="mini" type="primary" @click.native="submitCustomSel" :loading="customSelLoading">提交</el-button>
+            </div>
+        </el-dialog>
+
     </section>
 </template>
 
@@ -457,7 +558,7 @@ export default {
                     pid: 5,
                     name: '多选（checkbox）'
                 },{
-                    pid: 5,
+                    pid: 6,
                     name: '多选框（multiple select）'
                 }
             ],
@@ -534,7 +635,13 @@ export default {
 
             customFormVisible: false,
             customLoading: false,
-            customForm: []
+            customForm: [],
+            customEditForm: {},
+            customEditFormFlag: '',
+
+            customSelFormVisible: false,
+            customSelLoading: false,
+            customSelForm: []
         }
     },
     watch: {
@@ -604,7 +711,7 @@ export default {
             Type.findAttrs(this, params, (res, vm, cp) => {
                 if(res.code > 0){
                     this.typeAttrs = res.data;
-                    this.handleTypeAttr();
+                    this.handleTypeAttrAdd();
                 }else{
                     this.$message({
                         message: res.msg,
@@ -615,7 +722,7 @@ export default {
             });
         },
         //处理分类属性
-        handleTypeAttr: function(){
+        handleTypeAttrAdd: function(){
             let form = this.addForm;
             for (let i = 0; i < this.typeAttrs.length; i++) {
                 const e = this.typeAttrs[i];
@@ -637,7 +744,8 @@ export default {
                         }
                     }
                 }
-                form[e.code] = value
+                e.sys = 1;
+                form[e.code] = value;
             }
             this.addForm = Object.assign({}, form);
         },
@@ -679,17 +787,39 @@ export default {
         //自定义属性
         handleCustomAdd: function(){
             this.customForm = [];
+            for (let i = 0; i < this.typeAttrs.length; i++) {
+                const e = this.typeAttrs[i];
+                if(e.sys == 1){
+                    continue;
+                }
+                e.value = this.addForm[e.code];
+                e.index = i;
+                this.customForm.push(e);
+            }
             this.customLoading = false;
             this.customFormVisible = true;
+            this.customEditForm = this.addForm;
+            this.customEditFormFlag = 'add';
         },
         handleCustomEdit: function(){
+            this.customForm = [];
+            for (let i = 0; i < this.typeAttrs.length; i++) {
+                const e = this.typeAttrs[i];
+                if(e.sys == 1){
+                    continue;
+                }
+                e.index = i;
+                this.customForm.push(e);
+            }
             this.customLoading = false;
             this.customFormVisible = true;
+            this.customEditForm = this.editForm;
+            this.customEditFormFlag = 'edit';
         },
         addCustom: function(){
             this.customForm.push({
-                type: this.addForm.type,
-                config: this.addForm.pid,
+                type: this.customEditForm.type,
+                config: this.customEditForm.pid,
                 name: '',
                 code: '',
                 value: '',
@@ -700,11 +830,74 @@ export default {
                 ishide: 0,
                 sys: 0,
                 regexp: '',
-                regtips: ''
+                regtips: '',
+                options: []
             });
         },
         delCustom: function(index){
             this.customForm.splice(index, 1);
+        },
+        submitCustom: function(){
+            for (let i = 0; i < this.customForm.length; i++) {
+                const e = this.customForm[i];
+                e.sys = 0;
+                if(e.index){
+                    this.typeAttrs.splice(e.index, 1, e);
+                }else{
+                    this.typeAttrs.push(e);
+                }
+                //赋值
+                let value = e.value;
+                if(e.input == 3 || e.input == 4){
+                    for (let i = 0; i < e.options.length; i++) {
+                        const e2 = e.options[i];
+                        if(e2.checked == 1){
+                            value = e2.value;
+                            break;
+                        }
+                    }
+                }else if(e.input == 5 || e.input == 6){
+                    value = [];
+                    for (let i = 0; i < e.options.length; i++) {
+                        const e2 = e.options[i];
+                        if(e2.checked == 1){
+                            value.push(e2.value);
+                        }
+                    }
+                }
+                this.customEditForm[e.code] = value;
+            }
+            if(this.customEditFormFlag == 'add'){
+                this.addForm = Object.assign({}, this.customEditForm);
+            }else{
+                this.editForm = Object.assign({}, this.customEditForm);
+            }
+            this.customLoading = false;
+            this.customFormVisible = false;
+        },
+        //自定义选项
+        handleCustomSelAdd: function(index, options){
+            this.customSelForm = options;
+            this.customForm[index].options = this.customSelForm;
+            this.customSelLoading = false;
+            this.customSelFormVisible = true;
+        },
+        addCustomSel: function(){
+            this.customSelForm.push({
+                type: this.addForm.type,
+                config: this.addForm.pid,
+                name: '',
+                code: '',
+                value: '',
+                checked: 0
+            });
+        },
+        delCustomSel: function(index){
+            this.customSelForm.splice(index, 1);
+        },
+        submitCustomSel: function(){
+            this.customSelLoading = false;
+            this.customSelFormVisible = false;
         },
         //显示新增界面
         handleAdd: function () {
@@ -786,7 +979,9 @@ export default {
                     this.$confirm('确认提交吗？', '提示', {}).then(() => {
                         this.addLoading = true;
                         let params = Object.assign({}, this.addForm);
+                        console.log("----------------+++++--------------------");
                         console.log(params);
+                        console.log(this.customForm);
                         this.addLoading = false;
                         return;
                         Config.add(this, params, (res, vm, cp) => {
@@ -814,6 +1009,17 @@ export default {
         handleEdit: function (index, row) {
             this.editForm = Object.assign({}, row);
             this.editFormVisible = true;
+            this.typeAttrs = row.attr;
+            this.handleTypeAttrEdit();
+        },
+        //处理分类属性
+        handleTypeAttrEdit: function(){
+            let form = this.editForm;
+            for (let i = 0; i < this.typeAttrs.length; i++) {
+                const e = this.typeAttrs[i];
+                form[e.code] = e.value;
+            }
+            this.editForm = Object.assign({}, form);
         },
         //显示编辑界面
         editSubmit: function (index, row) {
@@ -822,6 +1028,11 @@ export default {
                     this.$confirm('确认提交吗？', '提示', {}).then(() => {
                         this.editLoading = true;
                         let params = Object.assign({}, this.editForm);
+                        console.log("------------------------------------");
+                        console.log(params);
+                        console.log(this.customForm);
+                        this.editLoading = false;
+                        return;
                         Config.update(this, params, (res, vm, cp) => {
                             this.editLoading = false;
                             if(res.code > 0){
@@ -902,6 +1113,7 @@ export default {
     border-radius: 4px;
     margin-bottom: 18px; 
     margin-top: -16px; 
+    min-width: 100%;
   }
   .fieldset .legend{
     color: #dcdfe6;

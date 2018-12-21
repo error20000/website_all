@@ -298,7 +298,7 @@
                     size="mini"
                     :data="addForm.loginOptions"
                     style="width: 100%">
-                    <el-table-column label="登录模式">
+                    <el-table-column label="登录模式" width="140px">
                         <template slot-scope="scope">
                             <el-select size="mini" v-model="scope.row.login_mode" placeholder="请选择模式">
                                 <el-option-group
@@ -312,7 +312,7 @@
                             </el-select>
                         </template>
                     </el-table-column>
-                    <el-table-column label="指定活动接口">
+                    <el-table-column label="指定活动接口" width="140px">
                         <template slot-scope="scope">
                             <el-select size="mini" v-model="scope.row.login_ifs" placeholder="请选择活动" :disabled="!changeLoginShow(scope.row.login_mode, 'login_ifs')">
                                 <el-option
@@ -322,25 +322,25 @@
                             </el-select>
                         </template>
                     </el-table-column>
-                    <el-table-column label="登录有效次数">
+                    <el-table-column label="登录有效次数" width="140px">
                         <template slot-scope="scope">
                             <el-input-number size="mini" controls-position="right" v-model="scope.row.login_count" :min="-1" :disabled="!changeLoginShow(scope.row.login_mode, 'login_count')">
                             </el-input-number>
                         </template>
                     </el-table-column>
-                    <el-table-column label="每次增加参与次数">
+                    <el-table-column label="每次增加参与次数" width="140px">
                         <template slot-scope="scope">
                             <el-input-number size="mini" controls-position="right" v-model="scope.row.login_num" :min="0" :disabled="!changeLoginShow(scope.row.login_mode, 'login_num')">
                             </el-input-number>
                         </template>
                     </el-table-column>
-                    <el-table-column label="总增加参与次数限制">
+                    <el-table-column label="总增加参与次数限制" width="140px">
                         <template slot-scope="scope">
                             <el-input-number size="mini" controls-position="right" v-model="scope.row.login_limit" :min="-1" :disabled="!changeLoginShow(scope.row.login_mode, 'login_limit')">
                             </el-input-number>
                         </template>
                     </el-table-column>
-                    <el-table-column label="操作" width="80">
+                    <el-table-column label="操作" width="80px" fixed="right">
                         <template slot-scope="scope">
                             <el-button size="mini" @click="loginModeDel(addForm, scope.$index)">删除</el-button>
                         </template>
@@ -363,7 +363,7 @@
                     size="mini"
                     :data="addForm.shareOptions"
                     style="width: 100%">
-                    <el-table-column label="分享模式">
+                    <el-table-column label="分享模式" width="140px">
                         <template slot-scope="scope">
                             <el-select size="mini" v-model="scope.row.share_mode" placeholder="请选择模式">
                                 <el-option-group
@@ -377,7 +377,7 @@
                             </el-select>
                         </template>
                     </el-table-column>
-                    <el-table-column label="指定活动接口">
+                    <el-table-column label="指定活动接口" width="140px">
                         <template slot-scope="scope">
                             <el-select size="mini" v-model="scope.row.share_ifs" placeholder="请选择活动" :disabled="!changeShareShow(scope.row.share_mode, 'share_ifs')">
                                 <el-option
@@ -387,25 +387,25 @@
                             </el-select>
                         </template>
                     </el-table-column>
-                    <el-table-column label="分享有效次数">
+                    <el-table-column label="分享有效次数" width="140px">
                         <template slot-scope="scope">
                             <el-input-number size="mini" controls-position="right" v-model="scope.row.share_count" :min="-1" :disabled="!changeShareShow(scope.row.share_mode, 'share_count')">
                             </el-input-number>
                         </template>
                     </el-table-column>
-                    <el-table-column label="每次增加参与次数">
+                    <el-table-column label="每次增加参与次数" width="140px">
                         <template slot-scope="scope">
                             <el-input-number size="mini" controls-position="right" v-model="scope.row.share_num" :min="0" :disabled="!changeShareShow(scope.row.share_mode, 'share_num')">
                             </el-input-number>
                         </template>
                     </el-table-column>
-                    <el-table-column label="总增加参与次数限制">
+                    <el-table-column label="总增加参与次数限制" width="140px">
                         <template slot-scope="scope">
                             <el-input-number size="mini" controls-position="right" v-model="scope.row.share_limit" :min="-1" :disabled="!changeShareShow(scope.row.share_mode, 'share_limit')">
                             </el-input-number>
                         </template>
                     </el-table-column>
-                    <el-table-column label="操作" width="80">
+                    <el-table-column label="操作" width="80px" fixed="right">
                         <template slot-scope="scope">
                             <el-button size="mini" @click="shareModeDel(addForm, scope.$index)">删除</el-button>
                         </template>
@@ -595,7 +595,7 @@
                     size="mini"
                     :data="editForm.loginOptions"
                     style="width: 100%">
-                    <el-table-column label="登录模式">
+                    <el-table-column label="登录模式" width="140px">
                         <template slot-scope="scope">
                             <el-select size="mini" v-model="scope.row.login_mode" placeholder="请选择模式">
                                 <el-option-group
@@ -609,7 +609,7 @@
                             </el-select>
                         </template>
                     </el-table-column>
-                    <el-table-column label="指定活动接口">
+                    <el-table-column label="指定活动接口" width="140px">
                         <template slot-scope="scope">
                             <el-select size="mini" v-model="scope.row.login_ifs" placeholder="请选择活动" :disabled="!changeLoginShow(scope.row.login_mode, 'login_ifs')">
                                 <el-option
@@ -619,25 +619,25 @@
                             </el-select>
                         </template>
                     </el-table-column>
-                    <el-table-column label="登录有效次数">
+                    <el-table-column label="登录有效次数" width="140px">
                         <template slot-scope="scope">
                             <el-input-number size="mini" controls-position="right" v-model="scope.row.login_count" :min="-1" :disabled="!changeLoginShow(scope.row.login_mode, 'login_count')">
                             </el-input-number>
                         </template>
                     </el-table-column>
-                    <el-table-column label="每次增加参与次数">
+                    <el-table-column label="每次增加参与次数" width="140px">
                         <template slot-scope="scope">
                             <el-input-number size="mini" controls-position="right" v-model="scope.row.login_num" :min="0" :disabled="!changeLoginShow(scope.row.login_mode, 'login_num')">
                             </el-input-number>
                         </template>
                     </el-table-column>
-                    <el-table-column label="总增加参与次数限制">
+                    <el-table-column label="总增加参与次数限制" width="140px">
                         <template slot-scope="scope">
                             <el-input-number size="mini" controls-position="right" v-model="scope.row.login_limit" :min="-1" :disabled="!changeLoginShow(scope.row.login_mode, 'login_limit')">
                             </el-input-number>
                         </template>
                     </el-table-column>
-                    <el-table-column label="操作" width="80">
+                    <el-table-column label="操作" width="80px" fixed="right">
                         <template slot-scope="scope">
                             <el-button size="mini" @click="loginModeDel(editForm, scope.$index)">删除</el-button>
                         </template>
@@ -660,7 +660,7 @@
                     size="mini"
                     :data="editForm.shareOptions"
                     style="width: 100%">
-                    <el-table-column label="分享模式">
+                    <el-table-column label="分享模式" width="140px">
                         <template slot-scope="scope">
                             <el-select size="mini" v-model="scope.row.share_mode" placeholder="请选择模式">
                                 <el-option-group
@@ -674,7 +674,7 @@
                             </el-select>
                         </template>
                     </el-table-column>
-                    <el-table-column label="指定活动接口">
+                    <el-table-column label="指定活动接口" width="140px">
                         <template slot-scope="scope">
                             <el-select size="mini" v-model="scope.row.share_ifs" placeholder="请选择活动" :disabled="!changeShareShow(scope.row.share_mode, 'share_ifs')">
                                 <el-option
@@ -684,25 +684,25 @@
                             </el-select>
                         </template>
                     </el-table-column>
-                    <el-table-column label="分享有效次数">
+                    <el-table-column label="分享有效次数" width="140px">
                         <template slot-scope="scope">
                             <el-input-number size="mini" controls-position="right" v-model="scope.row.share_count" :min="-1" :disabled="!changeShareShow(scope.row.share_mode, 'share_count')">
                             </el-input-number>
                         </template>
                     </el-table-column>
-                    <el-table-column label="每次增加参与次数">
+                    <el-table-column label="每次增加参与次数" width="140px">
                         <template slot-scope="scope">
                             <el-input-number size="mini" controls-position="right" v-model="scope.row.share_num" :min="0" :disabled="!changeShareShow(scope.row.share_mode, 'share_num')">
                             </el-input-number>
                         </template>
                     </el-table-column>
-                    <el-table-column label="总增加参与次数限制">
+                    <el-table-column label="总增加参与次数限制" width="140px">
                         <template slot-scope="scope">
                             <el-input-number size="mini" controls-position="right" v-model="scope.row.share_limit" :min="-1" :disabled="!changeShareShow(scope.row.share_mode, 'share_limit')">
                             </el-input-number>
                         </template>
                     </el-table-column>
-                    <el-table-column label="操作" width="80">
+                    <el-table-column label="操作" width="80px" fixed="right">
                         <template slot-scope="scope">
                             <el-button size="mini" @click="shareModeDel(editForm, scope.$index)">删除</el-button>
                         </template>
@@ -1335,6 +1335,7 @@ export default {
     border-radius: 4px;
     margin-bottom: 18px; 
     margin-top: -16px; 
+    min-width: 100%;
   }
   .fieldset .legend{
     color: #dcdfe6;
