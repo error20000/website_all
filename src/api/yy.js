@@ -1,7 +1,7 @@
 
 import Utils from "../js/utils";
 
-const baseUrl = "http://192.168.106.67:8095/api";
+const baseUrl = "http://127.0.0.1:8095/api";
 
 export const BespeakType = {
     baseUrl: baseUrl,

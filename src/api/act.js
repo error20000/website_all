@@ -2,7 +2,7 @@
 
 import Utils from "../js/utils";
 
-const baseUrl = "http://192.168.106.67:8105/api";
+const baseUrl = "http://127.0.0.1:8105/api";
 
 //Type
 export const Type = {
